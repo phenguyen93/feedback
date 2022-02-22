@@ -86,12 +86,16 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 
 			// Create Workbook instance holding reference to .xlsx file
 			XSSFWorkbook workbook = new XSSFWorkbook(file);
-			int numOfSheet = workbook.getNumberOfSheets()+1;
-			String label = "";
-			String feedback = "";
-			String answer = "";
+			int numOfSheet = workbook.getNumberOfSheets();
+			System.out.println("NumberOfSheet: "+numOfSheet);
 			
-			for (int i = 0; i < 2; i++) {
+			
+			for (int i = 12; i < 13; i++) {
+				int numOfBlank =0;
+				String label = "";
+				String feedback = "";
+				String answer = "";
+				int ordinalNum = 1;
 				
 				String promptId = workbook.getSheetName(i);
 				XSSFSheet sheet = workbook.getSheetAt(i);
@@ -99,15 +103,25 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 				System.out.println("number of rows of "+promptId+" is: "+rowNum);
 				
 				for (int j = 4; j < rowNum; j++) {	
-					
-					label = readCellData(j, 0, inputFileURL.getPath());
-					answer = readCellData(j, 1, inputFileURL.getPath());
-					feedback = readCellData(j, 2, inputFileURL.getPath());
-					
-//					System.out.println(label);
-					SRAItem newItem = new SRAItem(promptId, "", "", answer, feedback, label);
+					label = readCellData(j, 0, inputFileURL.getPath(),i);
+					answer =readCellData(j, 1, inputFileURL.getPath(),i);
+					feedback =readCellData(j, 2, inputFileURL.getPath(),i);
+					SRAItem newItem = new SRAItem(String.valueOf(ordinalNum), "", "", answer, feedback, label);
 					items.add(newItem);
+					ordinalNum++;
+					
+//					label = label + " "+readCellData(j, 0, inputFileURL.getPath(),i);					
+//					answer =answer +" "+ readCellData(j, 1, inputFileURL.getPath(),i);
+//					feedback = feedback+ " "+ readCellData(j, 2, inputFileURL.getPath(),i);
+					//get number of blank cell
+//					if(readCellData(j, 2, inputFileURL.getPath(),i).equals("")) {
+//						numOfBlank +=1;
+//					}
 				}
+//				System.out.println("Number of Blank:  "+numOfBlank);
+//				System.out.println(label);
+//				SRAItem newItem = new SRAItem(promptId, "", "", answer, feedback, label);
+//				items.add(newItem);
 			}
 			
             
@@ -208,7 +222,7 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
                
     }
 	
-	public static String readCellData(int row, int column, String path) {
+	public static String readCellData(int row, int column, String path, int index ) {
 
 		String value = null;
 		Workbook wb = null;
@@ -225,7 +239,7 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 			e1.printStackTrace();
 		}
 
-		Sheet sheet = wb.getSheetAt(0); // getting the XSSFSheet object at given index
+		Sheet sheet = wb.getSheetAt(index); // getting the XSSFSheet object at given index
 		Row row1 = sheet.getRow(row); // returns the logical row
 		Cell cell = row1.getCell(column); // getting the cell representing the given column
 		if(cell == null||row1 == null) {
