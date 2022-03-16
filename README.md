@@ -11,5 +11,6 @@ Feedback uses NLP techniques to read and process the data of the SRA dataset as 
 ## DKPro Pipeline
 When running java program, a DKPro Pipeline will be executed:
 - The SPReader class is first called to read the dataset. Here, informations such as questions, answers, target answers, and feedbacks, number of feedback will be read and saved to the SRAItem.
-- One jcas for each response message will be generated.
-- Next class Analyzer will be called. Here statistical calculations will be performed and exported. For example: number of words, number of sentences, type token ratio, number of words that overlap,...
+- One jcas for each feedback message will be generated.
+- Next, class Analyzer will be called. Here statistical calculations e.g. number of words, number of sentences, type token ratio, number of words that overlap,...
+ will be performed and exported
