@@ -71,11 +71,11 @@ public class AnswerReader extends JCasCollectionReader_ImplBase {
 
 	protected int currentIndex;
 
-	protected Queue<SRAItem> items;
+	protected Queue<SRAFeedbackItem> items;
 	
 	@Override
 	public void initialize(UimaContext aContext) throws ResourceInitializationException {
-		items = new LinkedList<SRAItem>();
+		items = new LinkedList<SRAFeedbackItem>();
 		
 		try {
 
@@ -115,7 +115,7 @@ public class AnswerReader extends JCasCollectionReader_ImplBase {
 					feedback =feedback+" "+ readCellData(j, 2, inputFileURL.getPath(),i);
 					
 				}
-				SRAItem newItem = new SRAItem(promptId, question, targetAnswer, answer, feedback, label,numberOfFeedback);
+				SRAFeedbackItem newItem = new SRAFeedbackItem(promptId, question, targetAnswer, answer, feedback, label,numberOfFeedback);
 				
 				items.add(newItem);
 				
@@ -127,14 +127,14 @@ public class AnswerReader extends JCasCollectionReader_ImplBase {
 			String questionAll = null;
 			String targetAnswerAll = null;
 			int numOfFeedbackAll = 0;
-			for (SRAItem item : items) {
+			for (SRAFeedbackItem item : items) {
 				feedbackAll = feedbackAll+" "+item.getFeedback();
 				answerAll = answerAll+" "+item.getAnswer();
 				questionAll = questionAll+" "+item.getQuestion();
 				targetAnswerAll= targetAnswerAll+" "+item.getTargetAnswer();
 				numOfFeedbackAll += item.getNumOfFeedback();
 			}
-			items.add(new SRAItem("AllPrompt",questionAll,targetAnswerAll,answerAll,feedbackAll,"X",numOfFeedbackAll));
+			items.add(new SRAFeedbackItem("AllPrompt",questionAll,targetAnswerAll,answerAll,feedbackAll,"X",numOfFeedbackAll));
 			
             
 		} catch (Exception e) {
@@ -163,7 +163,7 @@ public class AnswerReader extends JCasCollectionReader_ImplBase {
 
 	@Override
 	public void getNext(JCas jcas) throws IOException, CollectionException {
-		SRAItem item = items.poll();
+		SRAFeedbackItem item = items.poll();
 		getLogger().debug(item);
 		try {
 			jcas.setDocumentLanguage(language);
@@ -193,46 +193,6 @@ public class AnswerReader extends JCasCollectionReader_ImplBase {
 		outcome.addToIndexes();
 		currentIndex++;
 	}
-	public static void exportItem(Queue<MewsItem> items)
-    {
-  
-        
-  
-        // new file object
-        File file = new File("D:/ProjectCopie/write.txt");
-  
-        BufferedWriter bf = null;
-  
-        try {
-  
-            // create new BufferedWriter for the output file
-            bf = new BufferedWriter(new FileWriter(file));
-            
-            for(MewsItem i : items) {
-            	bf.write(i.getId() + ":"
-                        + i.getScore());
- 
-               // new line
-               bf.newLine();
-			}
-  
-            bf.flush();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-  
-            try {
-  
-                // always close the writer
-                bf.close();
-            }
-            catch (Exception e) {
-            }
-        }
-               
-    }
 	
 	public static String readCellData(int row, int column, String path, int sheetNumber ) {
 

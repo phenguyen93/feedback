@@ -64,11 +64,11 @@ public class TargetAnswerReader extends JCasCollectionReader_ImplBase {
 
 	protected int currentIndex;
 
-	protected Queue<SRAItem> items;
+	protected Queue<SRAFeedbackItem> items;
 	
 	@Override
 	public void initialize(UimaContext aContext) throws ResourceInitializationException {
-		items = new LinkedList<SRAItem>();
+		items = new LinkedList<SRAFeedbackItem>();
 		
 		try {
 
@@ -101,7 +101,7 @@ public class TargetAnswerReader extends JCasCollectionReader_ImplBase {
 //				items = new LinkedList<SRAItem>();
 				
 				
-				SRAItem newItem = new SRAItem(promptId, question, targetAnswer, answer, feedback, label,numberOfFeedback);
+				SRAFeedbackItem newItem = new SRAFeedbackItem(promptId, question, targetAnswer, answer, feedback, label,numberOfFeedback);
 				
 				items.add(newItem);
 				
@@ -112,14 +112,14 @@ public class TargetAnswerReader extends JCasCollectionReader_ImplBase {
 			String questionAll = null;
 			String targetAnswerAll = null;
 			int numberOfFeedbackAll = 0;
-			for (SRAItem item : items) {
+			for (SRAFeedbackItem item : items) {
 				feedbackAll = feedbackAll+" "+item.getFeedback();
 				answerAll = answerAll+" "+item.getAnswer();
 				questionAll = questionAll+" "+item.getQuestion();
 				targetAnswerAll= targetAnswerAll+" "+item.getTargetAnswer();
 				numberOfFeedbackAll += item.getNumOfFeedback();
 			}
-			items.add(new SRAItem("AllPrompt",questionAll,targetAnswerAll,answerAll,feedbackAll,"X",numberOfFeedbackAll));
+			items.add(new SRAFeedbackItem("AllPrompt",questionAll,targetAnswerAll,answerAll,feedbackAll,"X",numberOfFeedbackAll));
 			
 			
             
@@ -149,7 +149,7 @@ public class TargetAnswerReader extends JCasCollectionReader_ImplBase {
 
 	@Override
 	public void getNext(JCas jcas) throws IOException, CollectionException {
-		SRAItem item = items.poll();
+		SRAFeedbackItem item = items.poll();
 		getLogger().debug(item);
 		try {
 			jcas.setDocumentLanguage(language);

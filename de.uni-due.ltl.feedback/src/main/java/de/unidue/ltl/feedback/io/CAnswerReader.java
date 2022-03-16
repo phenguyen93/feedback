@@ -70,17 +70,17 @@ public class CAnswerReader extends JCasCollectionReader_ImplBase {
 
 	protected int currentIndex;
 
-	protected Queue<SRAItem> items;
-	protected Queue<SRAItem> correctItems;
-	protected Queue<SRAItem> partialCorrectItems;
-	protected Queue<SRAItem> incorrectItems;
+	protected Queue<SRAFeedbackItem> items;
+	protected Queue<SRAFeedbackItem> correctItems;
+	protected Queue<SRAFeedbackItem> partialCorrectItems;
+	protected Queue<SRAFeedbackItem> incorrectItems;
 
 	@Override
 	public void initialize(UimaContext aContext) throws ResourceInitializationException {
-		items = new LinkedList<SRAItem>();
-		correctItems = new LinkedList<SRAItem>();
-		partialCorrectItems = new LinkedList<SRAItem>();
-		incorrectItems = new LinkedList<SRAItem>();
+		items = new LinkedList<SRAFeedbackItem>();
+		correctItems = new LinkedList<SRAFeedbackItem>();
+		partialCorrectItems = new LinkedList<SRAFeedbackItem>();
+		incorrectItems = new LinkedList<SRAFeedbackItem>();
 		try {
 
 			inputFileURL = ResourceUtils.resolveLocation(inputFileString, this, aContext);
@@ -107,8 +107,8 @@ public class CAnswerReader extends JCasCollectionReader_ImplBase {
 				int rowNum = sheet.getLastRowNum() + 1;
 				System.out.println("number of rows of "+promptId+" is: "+rowNum);
 				
-				LinkedList<SRAItem> items = null;
-				items = new LinkedList<SRAItem>();
+				LinkedList<SRAFeedbackItem> items = null;
+				items = new LinkedList<SRAFeedbackItem>();
 				
 				
 				for (int j = 4; j < rowNum; j++) {	
@@ -128,7 +128,7 @@ public class CAnswerReader extends JCasCollectionReader_ImplBase {
 //					if(readCellData(j, 2, inputFileURL.getPath(),i).equals("")) {
 //						numOfBlank +=1;
 //					}
-					SRAItem newItem = new SRAItem(promptId, question, targetAnswer, answer, feedback, label,1);
+					SRAFeedbackItem newItem = new SRAFeedbackItem(promptId, question, targetAnswer, answer, feedback, label,1);
 					
 					items.add(newItem);
 				}
@@ -145,7 +145,7 @@ public class CAnswerReader extends JCasCollectionReader_ImplBase {
 				int numOfFeedbackIncorrect = 0;
 				int numOfFeedbackPartialCorrect = 0;
 												
-				for (SRAItem item1 : items) {
+				for (SRAFeedbackItem item1 : items) {
 					if (item1.getLabel().equals("correct")) {
 						answerCorrect = answerCorrect+" "+ item1.getAnswer();
 						feedbackCorrect =feedbackCorrect+" " + item1.getFeedback();
@@ -160,9 +160,9 @@ public class CAnswerReader extends JCasCollectionReader_ImplBase {
 						numOfFeedbackIncorrect += item1.getNumOfFeedback();
 					}
 				}
-				SRAItem sraIncorrect = new SRAItem(promptId, question, targetAnswer, answerIncorrect, feedbackIncorrect, "incorrect",numOfFeedbackIncorrect);
-				SRAItem sraCorrect = new SRAItem(promptId, question, targetAnswer, answerCorrect, feedbackCorrect, "correct",numOfFeedbackCorrect);
-				SRAItem sraPartialCorrect = new SRAItem(promptId, question, targetAnswer, answerPartialCorrect, feedbackPartialCorrect, "partially_correct",numOfFeedbackPartialCorrect);
+				SRAFeedbackItem sraIncorrect = new SRAFeedbackItem(promptId, question, targetAnswer, answerIncorrect, feedbackIncorrect, "incorrect",numOfFeedbackIncorrect);
+				SRAFeedbackItem sraCorrect = new SRAFeedbackItem(promptId, question, targetAnswer, answerCorrect, feedbackCorrect, "correct",numOfFeedbackCorrect);
+				SRAFeedbackItem sraPartialCorrect = new SRAFeedbackItem(promptId, question, targetAnswer, answerPartialCorrect, feedbackPartialCorrect, "partially_correct",numOfFeedbackPartialCorrect);
 				
 				correctItems.add(sraCorrect);				
 				partialCorrectItems.add(sraPartialCorrect);
@@ -181,14 +181,14 @@ public class CAnswerReader extends JCasCollectionReader_ImplBase {
 			String questionAll = null;
 			String targetAnswerAll = null;
 			int numOfFeedbackAll = 0;
-			for (SRAItem item : correctItems) {
+			for (SRAFeedbackItem item : correctItems) {
 				feedbackAll = feedbackAll+" "+item.getFeedback();
 				answerAll = answerAll+" "+item.getAnswer();
 				questionAll = questionAll+" "+item.getQuestion();
 				targetAnswerAll= targetAnswerAll+" "+item.getTargetAnswer();
 				numOfFeedbackAll += item.getNumOfFeedback();
 			}
-			correctItems.add(new SRAItem("AllPrompt",questionAll,targetAnswerAll,answerAll,feedbackAll,"X",numOfFeedbackAll));
+			correctItems.add(new SRAFeedbackItem("AllPrompt",questionAll,targetAnswerAll,answerAll,feedbackAll,"X",numOfFeedbackAll));
 			
             
 		} catch (Exception e) {
@@ -217,7 +217,7 @@ public class CAnswerReader extends JCasCollectionReader_ImplBase {
 
 	@Override
 	public void getNext(JCas jcas) throws IOException, CollectionException {
-		SRAItem item = correctItems.poll();
+		SRAFeedbackItem item = correctItems.poll();
 		getLogger().debug(item);
 		try {
 			jcas.setDocumentLanguage(language);
@@ -247,47 +247,7 @@ public class CAnswerReader extends JCasCollectionReader_ImplBase {
 		outcome.addToIndexes();
 		currentIndex++;
 	}
-	public static void exportItem(Queue<MewsItem> items)
-    {
-  
-        
-  
-        // new file object
-        File file = new File("D:/ProjectCopie/write.txt");
-  
-        BufferedWriter bf = null;
-  
-        try {
-  
-            // create new BufferedWriter for the output file
-            bf = new BufferedWriter(new FileWriter(file));
-            
-            for(MewsItem i : items) {
-            	bf.write(i.getId() + ":"
-                        + i.getScore());
- 
-               // new line
-               bf.newLine();
-			}
-  
-            bf.flush();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-  
-            try {
-  
-                // always close the writer
-                bf.close();
-            }
-            catch (Exception e) {
-            }
-        }
-               
-    }
-	
+
 	public static String readCellData(int row, int column, String path, int sheetNumber ) {
 
 		String value = null;

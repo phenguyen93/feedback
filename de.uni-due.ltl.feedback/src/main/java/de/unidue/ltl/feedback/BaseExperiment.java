@@ -19,13 +19,10 @@ import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiWriter;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpChunker;
 
 import de.unidue.ltl.feedback.io.AnswerReader;
-import de.unidue.ltl.feedback.io.AsapEssayReader;
-import de.unidue.ltl.feedback.io.MewsReader;
 import de.unidue.ltl.feedback.io.PCFeedbackReader;
 import de.unidue.ltl.feedback.io.QuestionReader;
-import de.unidue.ltl.feedback.io.SRAReader;
+import de.unidue.ltl.feedback.io.SRAFeedbackReader;
 import de.unidue.ltl.feedback.io.TargetAnswerReader;
-import de.unidue.ltl.feedback.io.AsapEssayReader.RatingBias;
 import de.unidue.ltl.feedback.io.CFeedbackReader;
 import de.unidue.ltl.feedback.io.ICFeedbackReader;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
@@ -43,8 +40,8 @@ public class BaseExperiment {
 		  // TODO: adjust path
 		  String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; 
 		  String scoreFile = ""; CollectionReaderDescription reader =
-		  CollectionReaderFactory.createReaderDescription( SRAReader.class,
-		  SRAReader.PARAM_INPUT_FILE, essayPath, SRAReader.PARAM_SCORE_FILE, scoreFile
+		  CollectionReaderFactory.createReaderDescription( SRAFeedbackReader.class,
+		  SRAFeedbackReader.PARAM_INPUT_FILE, essayPath, SRAFeedbackReader.PARAM_SCORE_FILE, scoreFile
 		  );
 		 
 		 

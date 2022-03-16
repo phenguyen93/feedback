@@ -1,6 +1,6 @@
 package de.unidue.ltl.feedback.io;
 
-public class SRAItem {
+public class SRAFeedbackItem {
 
 	private String promptId;
 	private String question;	
@@ -42,7 +42,7 @@ public class SRAItem {
 	}
 
 	
-	public SRAItem(String promptId, String question, String targetAnswer, String answer, String feedback,
+	public SRAFeedbackItem(String promptId, String question, String targetAnswer, String answer, String feedback,
 			String label, int numOfFeedback) {
 		super();
 		this.promptId = promptId;

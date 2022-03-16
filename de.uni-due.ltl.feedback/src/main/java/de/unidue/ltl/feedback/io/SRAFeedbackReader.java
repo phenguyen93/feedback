@@ -47,7 +47,7 @@ import de.unidue.ltl.escrito.io.util.Utils;
  * 
  */
 
-public class SRAReader extends JCasCollectionReader_ImplBase {
+public class SRAFeedbackReader extends JCasCollectionReader_ImplBase {
 
 	public static final String PARAM_INPUT_FILE = "InputFile";
 	@ConfigurationParameter(name = PARAM_INPUT_FILE, mandatory = true)
@@ -72,12 +72,12 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 
 	protected int currentIndex;
 
-	protected Queue<SRAItem> items;
+	protected Queue<SRAFeedbackItem> items;
 	int index;
 	
 	@Override
 	public void initialize(UimaContext aContext) throws ResourceInitializationException {
-		items = new LinkedList<SRAItem>();
+		items = new LinkedList<SRAFeedbackItem>();
 		index = 0;
 		
 		try {
@@ -115,7 +115,7 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 					}					
 				}
 				System.out.println("number of feedback of "+promptId+" is: "+numberOfFeedback);				
-				SRAItem newItem = new SRAItem(promptId, question, targetAnswer, answer, feedback, label,numberOfFeedback);				
+				SRAFeedbackItem newItem = new SRAFeedbackItem(promptId, question, targetAnswer, answer, feedback, label,numberOfFeedback);				
 				items.add(newItem);				
 			}
 			
@@ -125,7 +125,7 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 			StringBuilder questionAll = new StringBuilder();
 			StringBuilder targetAnswerAll = new StringBuilder();
 			int numOfFeedbackAll = 0;
-			for (SRAItem item : items) {
+			for (SRAFeedbackItem item : items) {
 				feedbackAll.append(item.getFeedback());
 				feedbackAll.append(" ");
 				answerAll.append(item.getAnswer());
@@ -136,7 +136,7 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 				targetAnswerAll.append(" ");
 				numOfFeedbackAll += item.getNumOfFeedback();
 			}
-			items.add(new SRAItem("AllPrompt",questionAll.toString(),targetAnswerAll.toString(),answerAll.toString(),feedbackAll.toString(),"X",numOfFeedbackAll));			            
+			items.add(new SRAFeedbackItem("AllPrompt",questionAll.toString(),targetAnswerAll.toString(),answerAll.toString(),feedbackAll.toString(),"X",numOfFeedbackAll));			            
 		} catch (Exception e) {
 			throw new ResourceInitializationException(e);
 		}
@@ -160,7 +160,7 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 
 	@Override
 	public void getNext(JCas jcas) throws IOException, CollectionException {
-		SRAItem item = items.poll();
+		SRAFeedbackItem item = items.poll();
 		getLogger().debug(item);
 		
 		try {

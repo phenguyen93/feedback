@@ -49,7 +49,7 @@ import de.unidue.ltl.escrito.core.types.Feedback;
 import de.unidue.ltl.escrito.core.types.GrammarProfile;
 import de.unidue.ltl.escrito.core.types.LearnerAnswer;
 import de.unidue.ltl.escrito.core.types.VocabularyProfile;
-import de.unidue.ltl.feedback.io.MewsItem;
+
 
 
 
@@ -130,19 +130,19 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 		
 		int numberOfUniqueWordInContentText = numberOfWord(uniqueText(textWithOnlyContentWords));
 		
-		int numOfSimilarWordWithQuestion = numOfSameWord(uniqueText(textWithOnlyContentWords), uniqueText(questionText));
-		double sameQuestionRatio = (double)numOfSimilarWordWithQuestion/numberOfUniqueWordInContentText;
+		int numOfWordOverlapWithQuestion = numOfOverlap(uniqueText(textWithOnlyContentWords), uniqueText(questionText));
+		double overlapWithQuestionRatio = (double)numOfWordOverlapWithQuestion/numberOfUniqueWordInContentText;
 		
-		int numOfSimilarWordWithTargetAnswer = numOfSameWord(uniqueText(textWithOnlyContentWords), uniqueText(targetAnswerText));
-		double sameTargetAnswerRatio = (double)numOfSimilarWordWithTargetAnswer/numberOfUniqueWordInContentText;
+		int numOfWordOverlapWithTargetAnswer = numOfOverlap(uniqueText(textWithOnlyContentWords), uniqueText(targetAnswerText));
+		double overlapWithTargetAnswerRatio = (double)numOfWordOverlapWithTargetAnswer/numberOfUniqueWordInContentText;
 		
-		int numOfSimilarWordWithAnswer = numOfSameWord(uniqueText(textWithOnlyContentWords), uniqueText(answerText));
-		double sameAnswerRatio = (double)numOfSimilarWordWithAnswer/numberOfUniqueWordInContentText;		
+		int numOfWordOverlapWithAnswer = numOfOverlap(uniqueText(textWithOnlyContentWords), uniqueText(answerText));
+		double overlapWithAnswerRatio = (double)numOfWordOverlapWithAnswer/numberOfUniqueWordInContentText;		
 		
 		//add to map to export parameters to excel file
 		data.put(String.valueOf(index),new Object[] {index,promptId,numberOfFeedback,numOfSentence,numOfSentenceNormalize,
 				numOfWord,numOfWordNormalize,wordsPerSentence,numOfUniqueWords,typeTokenRate,numOfContentWordNormalize,
-				sameAnswerRatio,sameQuestionRatio,sameTargetAnswerRatio,top5MostFrequentWords});
+				overlapWithAnswerRatio,overlapWithQuestionRatio,overlapWithTargetAnswerRatio,top5MostFrequentWords});
 		index++;
 		
 //		Collection<Chunk> chunks = JCasUtil.select(aJCas, Chunk.class);
@@ -418,7 +418,7 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 	}
 	
 	//calculate the number of similar words from 2 text
-	public static int numOfSameWord(String s1, String s2) {
+	public static int numOfOverlap(String s1, String s2) {
 
 		 int num = 0;
 		  String[] a = s1.split(" ");
