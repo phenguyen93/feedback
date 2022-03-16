@@ -8,7 +8,18 @@ public class SRAItem {
 	private String answer;
 	private String feedback;
 	private String label;
+	private int numOfFeedback;
 	
+	public int getNumOfFeedback() {
+		return numOfFeedback;
+	}
+
+
+	public void setNumOfFeedback(int numOfFeedback) {
+		this.numOfFeedback = numOfFeedback;
+	}
+
+
 	@Override
 	public String toString()
 	{
@@ -32,7 +43,7 @@ public class SRAItem {
 
 	
 	public SRAItem(String promptId, String question, String targetAnswer, String answer, String feedback,
-			String label) {
+			String label, int numOfFeedback) {
 		super();
 		this.promptId = promptId;
 		this.question = question;
@@ -40,6 +51,7 @@ public class SRAItem {
 		this.answer = answer;
 		this.feedback = feedback;
 		this.label = label;
+		this.numOfFeedback = numOfFeedback;
 	}
 	public String getPromptId() {
 		return promptId;

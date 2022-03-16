@@ -5,18 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Queue;
-
-import org.apache.commons.io.FileUtils;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,17 +31,15 @@ import org.dkpro.tc.api.type.TextClassificationTarget;
 
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.ResourceUtils;
-import de.unidue.ltl.escrito.core.types.DocumentData;
-import de.unidue.ltl.escrito.core.types.Feedback;
 import de.unidue.ltl.escrito.core.types.LearnerAnswer;
 import de.unidue.ltl.escrito.io.util.Utils;
 
 /*
- * read feedbacks, questions, target answers and answers from excel file
+ * read target answers
  * 
  */
 
-public class SRAReader extends JCasCollectionReader_ImplBase {
+public class TargetAnswerReader extends JCasCollectionReader_ImplBase {
 
 	public static final String PARAM_INPUT_FILE = "InputFile";
 	@ConfigurationParameter(name = PARAM_INPUT_FILE, mandatory = true)
@@ -73,75 +65,70 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 	protected int currentIndex;
 
 	protected Queue<SRAItem> items;
-	int index;
 	
 	@Override
 	public void initialize(UimaContext aContext) throws ResourceInitializationException {
 		items = new LinkedList<SRAItem>();
-		index = 0;
 		
 		try {
+
 			inputFileURL = ResourceUtils.resolveLocation(inputFileString, this, aContext);
 			
 			FileInputStream file = new FileInputStream(new File(inputFileURL.getPath()));
 
 			// Create Workbook instance holding reference to .xlsx file
-			XSSFWorkbook workbook = new XSSFWorkbook(file);			
+			XSSFWorkbook workbook = new XSSFWorkbook(file);
 			int numOfSheet = workbook.getNumberOfSheets();
 			System.out.println("NumberOfSheet: "+numOfSheet);
 			
 			for (int i = 0; i < numOfSheet; i++) {
 				
-				//get number of blank cell 
-				int numOfBlankCell =0;				
+				int numOfBlank =0;
 				String label = "";
 				String feedback = "";
 				String answer = "";
 				String targetAnswer = readCellData(1, 1, inputFileURL.getPath(),i);
 				String question = readCellData(0, 1, inputFileURL.getPath(),i);
 				String promptId = workbook.getSheetName(i);
-								
+				
+				
 				XSSFSheet sheet = workbook.getSheetAt(i);
 				int rowNum = sheet.getLastRowNum() + 1;
-				int numberOfFeedback =0;
-				//TODO: adjust the value of j so that it matches the first row containing feedback in the excel file		
-				for (int j = 4; j < rowNum; j++) {	
-					label =    readCellData(j, 0, inputFileURL.getPath(),i);
-					answer = answer+" "+  readCellData(j, 1, inputFileURL.getPath(),i);
-					feedback =feedback+" "+ readCellData(j, 2, inputFileURL.getPath(),i);
-					//get number of feedback
-					if(!readCellData(j, 2, inputFileURL.getPath(),i).equals("")) {
-						numberOfFeedback +=1;
-					}					
-				}
-				System.out.println("number of feedback of "+promptId+" is: "+numberOfFeedback);				
-				SRAItem newItem = new SRAItem(promptId, question, targetAnswer, answer, feedback, label,numberOfFeedback);				
-				items.add(newItem);				
+				int numberOfFeedback = rowNum -4;
+				System.out.println("number of feedback of "+promptId+" is: "+numberOfFeedback);
+				
+//				LinkedList<SRAItem> items = null;
+//				items = new LinkedList<SRAItem>();
+				
+				
+				SRAItem newItem = new SRAItem(promptId, question, targetAnswer, answer, feedback, label,numberOfFeedback);
+				
+				items.add(newItem);
+				
+				
 			}
-			
-			//Here(from lines 123-139) all the attributes of all the prompts are added together
-			StringBuilder feedbackAll = new StringBuilder();
-			StringBuilder answerAll = new StringBuilder();
-			StringBuilder questionAll = new StringBuilder();
-			StringBuilder targetAnswerAll = new StringBuilder();
-			int numOfFeedbackAll = 0;
+			String feedbackAll = null;
+			String answerAll = null;
+			String questionAll = null;
+			String targetAnswerAll = null;
+			int numberOfFeedbackAll = 0;
 			for (SRAItem item : items) {
-				feedbackAll.append(item.getFeedback());
-				feedbackAll.append(" ");
-				answerAll.append(item.getAnswer());
-				answerAll.append(" ");
-				questionAll.append(item.getQuestion());
-				questionAll.append(" ");
-				targetAnswerAll.append(item.getTargetAnswer());
-				targetAnswerAll.append(" ");
-				numOfFeedbackAll += item.getNumOfFeedback();
+				feedbackAll = feedbackAll+" "+item.getFeedback();
+				answerAll = answerAll+" "+item.getAnswer();
+				questionAll = questionAll+" "+item.getQuestion();
+				targetAnswerAll= targetAnswerAll+" "+item.getTargetAnswer();
+				numberOfFeedbackAll += item.getNumOfFeedback();
 			}
-			items.add(new SRAItem("AllPrompt",questionAll.toString(),targetAnswerAll.toString(),answerAll.toString(),feedbackAll.toString(),"X",numOfFeedbackAll));			            
+			items.add(new SRAItem("AllPrompt",questionAll,targetAnswerAll,answerAll,feedbackAll,"X",numberOfFeedbackAll));
+			
+			
+            
 		} catch (Exception e) {
 			throw new ResourceInitializationException(e);
 		}
 		currentIndex = 0;
 	}
+
 	// HOTFIX for Issue 445 in DKPro Core
 	private static String cleanString(String textForCas) {
 		textForCas = textForCas.replaceAll("[^a-zA-Z0-9\\-\\.,:;\\(\\)\\? ]", "");
@@ -149,7 +136,9 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 		textForCas = textForCas.replace("´", "'");
 		return textForCas.replace("’", "'").trim();
 	}
-	
+
+
+
 	public boolean hasNext() throws IOException, CollectionException {
 		return !items.isEmpty();
 	}
@@ -162,27 +151,19 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 	public void getNext(JCas jcas) throws IOException, CollectionException {
 		SRAItem item = items.poll();
 		getLogger().debug(item);
-		
 		try {
-			
 			jcas.setDocumentLanguage(language);
-			jcas.setDocumentText(item.getFeedback());
+			jcas.setDocumentText(item.getTargetAnswer());
 			DocumentMetaData dmd = DocumentMetaData.create(jcas);
-			//TODO: The name of the getters und setters must be meaningful
 			dmd.setDocumentId(item.getPromptId());
-			dmd.setDocumentTitle(item.getFeedback());
-			dmd.setCollectionId(item.getAnswer());
-			dmd.setDocumentBaseUri(item.getQuestion());
-			dmd.setDocumentUri(item.getTargetAnswer());					
-			dmd.setEnd(item.getNumOfFeedback());
-			
+			dmd.setDocumentTitle(item.getTargetAnswer());
+			dmd.setDocumentUri(inputFileURL.toURI().toString());
+			dmd.setCollectionId(item.getPromptId());
 		}
 
-		catch (Exception e) {
+		catch (URISyntaxException e) {
 			throw new CollectionException(e);
 		}
-		Feedback fb = new Feedback(jcas, 0, jcas.getDocumentText().length());
-		fb.setId(item.getPromptId());
 
 		LearnerAnswer learnerAnswer = new LearnerAnswer(jcas, 0, jcas.getDocumentText().length());
 		learnerAnswer.setPromptId("-1");
@@ -199,10 +180,12 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 		currentIndex++;
 	}
 	
-	//read value of a cell in excel with given row and column values
+	// read from excel data
 	public static String readCellData(int row, int column, String path, int sheetNumber ) {
+
 		String value = null;
 		Workbook wb = null;
+
 		try {
 			// reading data from a file in the form of bytes
 			FileInputStream fis=new FileInputStream(path);  
@@ -223,7 +206,10 @@ public class SRAReader extends JCasCollectionReader_ImplBase {
 		}else {
 			value = cell.getStringCellValue();
 		}
-				return value; // returns the cell value
+		
+		return value; // returns the cell value
+
 	}
-	
+
+
 }

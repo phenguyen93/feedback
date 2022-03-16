@@ -17,10 +17,17 @@ import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpSegmenter;
 import de.tudarmstadt.ukp.dkpro.core.io.bincas.BinaryCasWriter;
 import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiWriter;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpChunker;
+
+import de.unidue.ltl.feedback.io.AnswerReader;
 import de.unidue.ltl.feedback.io.AsapEssayReader;
 import de.unidue.ltl.feedback.io.MewsReader;
+import de.unidue.ltl.feedback.io.PCFeedbackReader;
+import de.unidue.ltl.feedback.io.QuestionReader;
 import de.unidue.ltl.feedback.io.SRAReader;
+import de.unidue.ltl.feedback.io.TargetAnswerReader;
 import de.unidue.ltl.feedback.io.AsapEssayReader.RatingBias;
+import de.unidue.ltl.feedback.io.CFeedbackReader;
+import de.unidue.ltl.feedback.io.ICFeedbackReader;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 public class BaseExperiment {
@@ -32,72 +39,85 @@ public class BaseExperiment {
 	private static void preprocess() throws ResourceInitializationException, UIMAException, IOException {
 		
 		
-// Toefl11Reader		
-		/*
-		 * String scoreFile= "src/main/resources/data/index_small.csv"; String essayPath
-		 * = "src/main/resources/data/"; System.setProperty("DKPRO_HOME",
-		 * "C:\\Users\\ENVY\\workspace\\DKPRO_HOME"); CollectionReaderDescription reader
-		 * = CollectionReaderFactory.createReaderDescription( Toefl11Reader.class,
-		 * Toefl11Reader.PARAM_INPUT_PATH, essayPath, Toefl11Reader.PARAM_SCORE_FILE,
-		 * scoreFile);
-		 */
-		 
-		
-		//ASAP Reader	
-		
-		
-		
-		
-		
-		
-		/*
-		 * CollectionReaderDescription reader =
-		 * CollectionReaderFactory.createReaderDescription(AsapEssayReader.class,
-		 * AsapEssayReader.PARAM_QUESTION_ID,1, AsapEssayReader.PARAM_TARGET_LABEL,
-		 * "score", AsapEssayReader.PARAM_RATING_BIAS, RatingBias.low,
-		 * AsapEssayReader.PARAM_DO_SPARSECLASSMERGING, false,
-		 * AsapEssayReader.PARAM_DO_NORMALIZATION, false,
-		 * AsapEssayReader.PARAM_INPUT_FILE,
-		 * "D:\\BA\\asap_essays Kopie\\training_set_rel3.tsv");
-		 * 
-		 */
-		 
-		 
-		
-		//SRA Reader
-		
-		
-		  String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Example.xlsx";
-		  String scoreFile = "";
-		  CollectionReaderDescription reader =
+		  //SRA Reader
+		  // TODO: adjust path
+		  String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; 
+		  String scoreFile = ""; CollectionReaderDescription reader =
 		  CollectionReaderFactory.createReaderDescription( SRAReader.class,
-		  SRAReader.PARAM_INPUT_FILE, essayPath, SRAReader.PARAM_SCORE_FILE, scoreFile );		
+		  SRAReader.PARAM_INPUT_FILE, essayPath, SRAReader.PARAM_SCORE_FILE, scoreFile
+		  );
+		 
+		 
 		
-		
-		
-		
-		
-		
-		
-//        MEWSReader		
+		/*
+		 * //QuestionReader
+		 * 
+		 * String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; String
+		 * scoreFile = ""; CollectionReaderDescription reader =
+		 * CollectionReaderFactory.createReaderDescription( QuestionReader.class,
+		 * QuestionReader.PARAM_INPUT_FILE, essayPath, QuestionReader.PARAM_SCORE_FILE,
+		 * scoreFile );
+		 */
+		  
 		
 			/*
-			 * String scoreFile =
-			 * "D:\\BA\\MEWS_Essays\\MEWS_Essays\\MEWSdocs\\MEWS_FINAL_Deliverable_ScoreFile_120817.tsv";
-			 * String essayPath = "D:\\BA\\Mews_New\\Prompts/ALL";
-			 * CollectionReaderDescription reader =
-			 * CollectionReaderFactory.createReaderDescription( MewsReader.class,
-			 * MewsReader.PARAM_INPUT_FILE, essayPath, MewsReader.PARAM_SCORE_FILE,
-			 * scoreFile);
+			 * //TargetAnswerReader
+			 * 
+			 * String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; String
+			 * scoreFile = ""; CollectionReaderDescription reader =
+			 * CollectionReaderFactory.createReaderDescription( TargetAnswerReader.class,
+			 * TargetAnswerReader.PARAM_INPUT_FILE, essayPath,
+			 * TargetAnswerReader.PARAM_SCORE_FILE, scoreFile );
 			 */
-		 
-		 
+		
+		
+		/*
+		 * //AnswerReader
+		 * 
+		 * String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; String
+		 * scoreFile = ""; CollectionReaderDescription reader =
+		 * CollectionReaderFactory.createReaderDescription(AnswerReader.class,
+		 * AnswerReader.PARAM_INPUT_FILE, essayPath,AnswerReader.PARAM_SCORE_FILE,
+		 * scoreFile );
+		 */
+		
+		
+		
+		
+		/*
+		 * //CFeedbackReader
+		 * 
+		 * String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; String
+		 * scoreFile = ""; CollectionReaderDescription reader =
+		 * CollectionReaderFactory.createReaderDescription(CFeedbackReader.class,
+		 * CFeedbackReader.PARAM_INPUT_FILE, essayPath,CFeedbackReader.PARAM_SCORE_FILE,
+		 * scoreFile );
+		 */
 		 
 		
 		
-			 
-		 
-
+		/*
+		 * //ICFeedbackReader
+		 * 
+		 * String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; String
+		 * scoreFile = ""; CollectionReaderDescription reader =
+		 * CollectionReaderFactory.createReaderDescription(ICFeedbackReader.class,
+		 * ICFeedbackReader.PARAM_INPUT_FILE,
+		 * essayPath,ICFeedbackReader.PARAM_SCORE_FILE, scoreFile );
+		 */
+		
+		
+		
+		/*
+		 * //PCFeedbackReader
+		 * 
+		 * String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; String
+		 * scoreFile = ""; CollectionReaderDescription reader =
+		 * CollectionReaderFactory.createReaderDescription(PCFeedbackReader.class,
+		 * PCFeedbackReader.PARAM_INPUT_FILE,
+		 * essayPath,PCFeedbackReader.PARAM_SCORE_FILE, scoreFile );
+		 */
+		  				
 		AnalysisEngineDescription seg = createEngineDescription(CoreNlpSegmenter.class,
 				CoreNlpSegmenter.PARAM_LANGUAGE, "en");
 		AnalysisEngineDescription posTagger = createEngineDescription(CoreNlpPosTagger.class,
@@ -105,7 +125,7 @@ public class BaseExperiment {
 		AnalysisEngineDescription lemmatizer = createEngineDescription(CoreNlpLemmatizer.class);
 		AnalysisEngineDescription chunker = createEngineDescription(OpenNlpChunker.class,
 				OpenNlpChunker.PARAM_LANGUAGE, "en");
-		AnalysisEngineDescription vocab = createEngineDescription(VocabAnnotator.class);
+//		AnalysisEngineDescription vocab = createEngineDescription(VocabAnnotator.class);
 		
 		AnalysisEngineDescription analyzer = createEngineDescription(Analyzer.class);
 		
@@ -127,7 +147,6 @@ public class BaseExperiment {
 				posTagger, 
 				lemmatizer,
 	//				chunker,
-	//			vocab,
 				analyzer
 	//			xmiWriter,
 	//			binCasWriter

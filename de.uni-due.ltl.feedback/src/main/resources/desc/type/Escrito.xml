@@ -5,6 +5,41 @@
 	<version>1.0</version>
 	<vendor/>
 	<types>
+	
+		<typeDescription>
+			<name>de.unidue.ltl.escrito.core.types.DocumentData</name>
+			<description/>
+			<supertypeName>uima.tcas.DocumentAnnotation</supertypeName>
+			<features>
+				<featureDescription>
+					<name>documentTitle</name>
+					<description/>
+					<rangeTypeName>uima.cas.String</rangeTypeName>
+				</featureDescription>
+			</features>
+			<features>
+				<featureDescription>
+					<name>documentId</name>
+					<description/>
+					<rangeTypeName>uima.cas.String</rangeTypeName>
+				</featureDescription>
+			</features>
+			<features>
+				<featureDescription>
+					<name>documentUri</name>
+					<description/>
+					<rangeTypeName>uima.cas.String</rangeTypeName>
+				</featureDescription>
+			</features>
+			<features>
+				<featureDescription>
+					<name>collectionId</name>
+					<description/>
+					<rangeTypeName>uima.cas.String</rangeTypeName>
+				</featureDescription>
+			</features>
+		</typeDescription>
+		
 		<typeDescription>
 			<name>de.unidue.ltl.escrito.core.types.LearnerAnswer</name>
 			<description/>
@@ -58,6 +93,23 @@
         </featureDescription>
       <featureDescription>
           <name>level</name>
+          <description/>
+          <rangeTypeName>uima.cas.String</rangeTypeName>
+        </featureDescription>
+      </features>
+    </typeDescription>
+    <typeDescription>
+      <name>de.unidue.ltl.escrito.core.types.Feedback</name>
+      <description/>
+      <supertypeName>uima.tcas.Annotation</supertypeName>
+      <features>
+        <featureDescription>
+          <name>feedback</name>
+          <description/>
+          <rangeTypeName>uima.cas.String</rangeTypeName>
+        </featureDescription>
+      <featureDescription>
+          <name>id</name>
           <description/>
           <rangeTypeName>uima.cas.String</rangeTypeName>
         </featureDescription>
