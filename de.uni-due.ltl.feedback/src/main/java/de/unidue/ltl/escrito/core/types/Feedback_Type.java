@@ -1,5 +1,5 @@
 
-/* First created by JCasGen Thu May 20 14:40:01 CEST 2021 */
+
 package de.unidue.ltl.escrito.core.types;
 
 import org.apache.uima.jcas.JCas;
@@ -11,7 +11,7 @@ import org.apache.uima.cas.Feature;
 import org.apache.uima.jcas.tcas.Annotation_Type;
 
 /** 
- * Updated by JCasGen Fri May 21 18:45:18 CEST 2021
+ * 
  * @generated */
 public class Feedback_Type extends Annotation_Type {
   /** @generated */
