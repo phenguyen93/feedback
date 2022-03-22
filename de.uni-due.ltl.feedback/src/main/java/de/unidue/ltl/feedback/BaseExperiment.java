@@ -21,6 +21,7 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpChunker;
 import de.unidue.ltl.feedback.io.AnswerReader;
 import de.unidue.ltl.feedback.io.PCFeedbackReader;
 import de.unidue.ltl.feedback.io.QuestionReader;
+import de.unidue.ltl.feedback.io.SRAFeedbackLineReader;
 import de.unidue.ltl.feedback.io.SRAFeedbackReader;
 import de.unidue.ltl.feedback.io.TargetAnswerReader;
 import de.unidue.ltl.feedback.io.CFeedbackReader;
@@ -36,15 +37,21 @@ public class BaseExperiment {
 	private static void preprocess() throws ResourceInitializationException, UIMAException, IOException {
 		
 		
-		  //SRA Reader
+		  //SRAFeedback Reader
 		  // TODO: adjust path
 		  String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; 
 		  String scoreFile = ""; CollectionReaderDescription reader =
-		  CollectionReaderFactory.createReaderDescription( SRAFeedbackReader.class,
-		  SRAFeedbackReader.PARAM_INPUT_FILE, essayPath, SRAFeedbackReader.PARAM_SCORE_FILE, scoreFile
+		  CollectionReaderFactory.createReaderDescription( SRAFeedbackLineReader.class,
+		  SRAFeedbackLineReader.PARAM_INPUT_FILE, essayPath, SRAFeedbackLineReader.PARAM_SCORE_FILE, scoreFile
 		  );
-		 
-		 
+			/*
+			 * //SRAFeedback Reader // TODO: adjust path String essayPath =
+			 * "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; String scoreFile = "";
+			 * CollectionReaderDescription reader =
+			 * CollectionReaderFactory.createReaderDescription( SRAFeedbackReader.class,
+			 * SRAFeedbackReader.PARAM_INPUT_FILE, essayPath,
+			 * SRAFeedbackReader.PARAM_SCORE_FILE, scoreFile );
+			 */
 		
 		/*
 		 * //QuestionReader

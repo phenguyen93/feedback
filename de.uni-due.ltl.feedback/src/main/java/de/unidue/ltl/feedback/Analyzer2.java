@@ -53,7 +53,7 @@ import de.unidue.ltl.escrito.core.types.VocabularyProfile;
 
 
 
-public class Analyzer extends JCasAnnotator_ImplBase {
+public class Analyzer2 extends JCasAnnotator_ImplBase {
 	
 
 	static Map<String, Object[]> data; 
@@ -64,8 +64,8 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 	    super.initialize(context);
 	    data =  new TreeMap<String, Object[]>();
 	    //create label for excel file
-	    data.put("0", new Object[] {" ","Prompt ID","Label", "NumOfSentences", "NumOfWords","Words/sentence","UniqueWord","Type-TokenRatio",
-	    		"NumOfContentWords","Content-TokenRatio","OverlapWithAnswer(%)","OverlapWithQuestion(%)","OverlapWithTargetAnswer(%)"});	   
+	    data.put("0", new Object[] {" ","Prompt ID","NumOfFeedback", "NumOfSentences","NumOfSentences/NumOfFeedback", "NumOfWords","NumOfWords/NumOfFeedback","Words/sentence","UniqueWord","Type-TokenRatio",
+	    		"NumOfContentWords/numOfFeedback","%SameAnswer","%SameQuestion","%SameTargetAnswer","Top5MostFrequentWords"});	   
 	}
 	
 	@Override
@@ -74,12 +74,12 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 		DocumentMetaData meta = JCasUtil.selectSingle(aJCas, DocumentMetaData.class);
 		
 		String promptId = meta.getDocumentId();		
-		String labelText = meta.getDocumentTitle();
+		String feedbackText = meta.getDocumentTitle();
 		String answerText = meta.getCollectionId();
 		String questionText = meta.getDocumentBaseUri();
 		String targetAnswerText = meta.getDocumentUri();
 		int numberOfFeedback = meta.getEnd();
-		
+				
 //		System.out.println("Printing feedback text:"+feedbackText);
 		
 		Collection<Sentence> sentences = JCasUtil.select(aJCas, Sentence.class);
@@ -111,7 +111,7 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 		
 		String textWithoutPunc = sbAllWords.toString();	
 		int numOfWord = numberOfWord(textWithoutPunc);
-//		double numOfWordNormalize = (double) numOfWord/numberOfFeedback;
+		double numOfWordNormalize = (double) numOfWord/numberOfFeedback;
 		
 		System.out.println("Anzahl der Wörter: "+ numOfWord+"<<<<<" +tokenWithoutPunc);
 		double wordsPerSentence = (double) numOfWord/numOfSentence;
@@ -123,10 +123,8 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 		System.out.println("----Printing content text-----:"+textWithOnlyContentWords);
 		
 		int numOfContentWord = numberOfWord(textWithOnlyContentWords);
-		double contentTokenRate = (double)numOfContentWord/numOfWord;
-				
-//		double numOfContentWordNormalize = (double) numOfContentWord/numberOfFeedback;
-
+		double numOfContentWordNormalize = (double) numOfContentWord/numberOfFeedback;
+		double numOfContentWordPerNumberOfWord = (double) numOfContentWord/numOfWord;
 						
 //		String top5MostFrequentWords = mostFrequentWords(textWithOnlyContentWords); 
 		
@@ -142,8 +140,8 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 		double overlapWithAnswerRatio = (double)numOfWordOverlapWithAnswer/numberOfUniqueWordInContentText;		
 		
 		//add to map to export parameters to excel file
-		data.put(String.valueOf(index),new Object[] {index,promptId,labelText,numOfSentence,
-				numOfWord,wordsPerSentence,numOfUniqueWords,typeTokenRate,numOfContentWord,contentTokenRate,
+		data.put(String.valueOf(index),new Object[] {index,promptId,numberOfFeedback,numOfSentence,numOfSentenceNormalize,
+				numOfWord,numOfWordNormalize,wordsPerSentence,numOfUniqueWords,typeTokenRate,numOfContentWordNormalize,
 				overlapWithAnswerRatio,overlapWithQuestionRatio,overlapWithTargetAnswerRatio});
 		index++;
 		
