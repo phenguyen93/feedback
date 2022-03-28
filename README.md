@@ -7,9 +7,9 @@ Feedback uses NLP techniques to read and process the data of the SRA dataset as 
 # Usage
 ## First Steps
 - Import Feedback as a maven project in eclipse
-- Adjust the path to the data to be read (in baseExperiment class), and where the data should be output (in Analyze class at destroy() medthod) and try running baseExperiment class
+- Adjust the paths to the data to be read (in baseExperiment class), and where the data should be output and try running BaseExperiment class
 ## DKPro Pipeline
 When running java program, a DKPro Pipeline will be executed:
-- The SPReader class is first called to read the dataset. Here, informations such as questions, answers, target answers, and feedbacks, number of feedback will be read and saved to the SRAItem.
+- The SRAFeedbackLineReader class is first called to read the dataset. Here, informations such as questions, answers, target answers, and feedbacks, number of feedback will be read and saved to the SRAItem.
 - One jcas for each response message will be generated.
-- Next class Analyzer will be called. Here statistical calculations will be performed and exported. For example: number of words, number of sentences, type token ratio, number of words that overlap,...
+- Next class Analyzer will be called. Here statistical calculations will be performed and exported. For example: number of words, number of sentences, type token ratio, number of words that overlap and not overlap
