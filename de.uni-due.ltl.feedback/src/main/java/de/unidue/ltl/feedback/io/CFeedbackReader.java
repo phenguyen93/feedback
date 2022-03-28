@@ -41,7 +41,7 @@ public class CFeedbackReader extends JCasCollectionReader_ImplBase {
 	protected URL inputFileURL;
 
 	public static final String PARAM_SCORE_FILE = "ScoreFile";
-	@ConfigurationParameter(name = PARAM_SCORE_FILE, mandatory = true)
+	@ConfigurationParameter(name = PARAM_SCORE_FILE, mandatory = false)
 	protected String scoreFileString;
 
 	public static final String PARAM_LANGUAGE = "Language";
