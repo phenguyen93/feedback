@@ -53,7 +53,7 @@ import de.unidue.ltl.escrito.core.types.VocabularyProfile;
 
 
 
-public class Analyzer2 extends JCasAnnotator_ImplBase {
+public class PromptAnalyzer extends JCasAnnotator_ImplBase {
 	
 
 	static Map<String, Object[]> data; 

@@ -1,11 +1,9 @@
 package de.unidue.ltl.feedback.io;
 
-import java.io.BufferedWriter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -32,7 +30,7 @@ import org.dkpro.tc.api.type.TextClassificationTarget;
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.ResourceUtils;
 import de.unidue.ltl.escrito.core.types.LearnerAnswer;
-import de.unidue.ltl.escrito.io.util.Utils;
+
 
 /*
  * read question

@@ -1,14 +1,8 @@
 package de.unidue.ltl.feedback;
 
-import java.io.BufferedWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
@@ -34,6 +27,7 @@ import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.component.initialize.ConfigurationParameterInitializer;
 import org.apache.uima.fit.component.initialize.ExternalResourceInitializer;
+import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -44,17 +38,13 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.PennTree;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.chunk.Chunk;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
-import de.unidue.ltl.escrito.core.types.DocumentData;
-import de.unidue.ltl.escrito.core.types.Feedback;
-import de.unidue.ltl.escrito.core.types.GrammarProfile;
-import de.unidue.ltl.escrito.core.types.LearnerAnswer;
-import de.unidue.ltl.escrito.core.types.VocabularyProfile;
-
-
-
 
 public class Analyzer extends JCasAnnotator_ImplBase {
 	
+	public static final String PARAM_OUTPUT_FILE = "InputFile";
+	@ConfigurationParameter(name = PARAM_OUTPUT_FILE, mandatory = true)
+	protected String outputFileString;
+	protected URL outputFileURL;
 
 	static Map<String, Object[]> data; 
 	static Map<String, Object[]> fdata; 
@@ -65,7 +55,7 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 	    data =  new TreeMap<String, Object[]>();
 	    //create label for excel file
 	    data.put("0", new Object[] {" ","Prompt ID","Label", "NumOfSentences", "NumOfWords","Words/sentence","UniqueWord","Type-TokenRatio",
-	    		"NumOfContentWords","Content-TokenRatio","OverlapWithAnswer(%)","OverlapWithQuestion(%)","OverlapWithTargetAnswer(%)"});	   
+	    		"NumOfContentWords","Content-TokenRatio","OverlapWithAnswer(%)","OverlapWithQuestion(%)","OverlapWithTargetAnswer(%)","Non Overlap Words"});	   
 	}
 	
 	@Override
@@ -130,21 +120,37 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 						
 //		String top5MostFrequentWords = mostFrequentWords(textWithOnlyContentWords); 
 		
-		int numberOfUniqueWordInContentText = numberOfWord(uniqueText(textWithOnlyContentWords));
+		int numberOfUniqueWordInContentText = numberOfWord(uniqueTextWithoutPunc(textWithOnlyContentWords));
 		
-		int numOfWordOverlapWithQuestion = numOfOverlap(uniqueText(textWithOnlyContentWords), uniqueText(questionText));
+		int numOfWordOverlapWithQuestion = numOfOverlap(uniqueTextWithoutPunc(textWithOnlyContentWords), uniqueTextWithoutPunc(questionText));
 		double overlapWithQuestionRatio = (double)numOfWordOverlapWithQuestion/numberOfUniqueWordInContentText;
 		
-		int numOfWordOverlapWithTargetAnswer = numOfOverlap(uniqueText(textWithOnlyContentWords), uniqueText(targetAnswerText));
+		int numOfWordOverlapWithTargetAnswer = numOfOverlap(uniqueTextWithoutPunc(textWithOnlyContentWords), uniqueTextWithoutPunc(targetAnswerText));
 		double overlapWithTargetAnswerRatio = (double)numOfWordOverlapWithTargetAnswer/numberOfUniqueWordInContentText;
 		
-		int numOfWordOverlapWithAnswer = numOfOverlap(uniqueText(textWithOnlyContentWords), uniqueText(answerText));
-		double overlapWithAnswerRatio = (double)numOfWordOverlapWithAnswer/numberOfUniqueWordInContentText;		
+		int numOfWordOverlapWithAnswer = numOfOverlap(uniqueTextWithoutPunc(textWithOnlyContentWords), uniqueTextWithoutPunc(answerText));
+		double overlapWithAnswerRatio = (double)numOfWordOverlapWithAnswer/numberOfUniqueWordInContentText;
+		
+		//get List of overlap words with question
+		List<String> overlapWithQuestion = overlapWordsList(uniqueTextWithoutPunc(textWithoutPunc), uniqueTextWithoutPunc(questionText));
+		//get List of overlap words with target answer
+		List<String> overlapWithTargetAnswer = overlapWordsList(uniqueTextWithoutPunc(textWithOnlyContentWords), uniqueTextWithoutPunc(targetAnswerText));
+		//get List of overlap words with answer
+		List<String> overlapWithAnswer = overlapWordsList(uniqueTextWithoutPunc(textWithOnlyContentWords), uniqueTextWithoutPunc(answerText));
+		//create List of all overlap words
+		ArrayList<String> list = new ArrayList<String>();
+		list.addAll(overlapWithQuestion);
+		list.addAll(overlapWithTargetAnswer);
+		list.addAll(overlapWithAnswer);
+		String allOverlapText = String.join(" ", list);
+		String nonOverlapWords = nonOverlapWords(uniqueTextWithoutPunc(textWithoutPunc), allOverlapText);
+		
+		
 		
 		//add to map to export parameters to excel file
 		data.put(String.valueOf(index),new Object[] {index,promptId,labelText,numOfSentence,
 				numOfWord,wordsPerSentence,numOfUniqueWords,typeTokenRate,numOfContentWord,contentTokenRate,
-				overlapWithAnswerRatio,overlapWithQuestionRatio,overlapWithTargetAnswerRatio});
+				overlapWithAnswerRatio,overlapWithQuestionRatio,overlapWithTargetAnswerRatio,nonOverlapWords});
 		index++;
 		
 //		Collection<Chunk> chunks = JCasUtil.select(aJCas, Chunk.class);
@@ -174,8 +180,8 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 		// TODO Auto-generated method stub
 		super.destroy();
 		//TODO adjust where to export data
-		String fileName = "D:\\HIWI\\Kickoff\\Ergebnisse\\Test.xlsx";
-		String sheetName = "Line";
+		String fileName = outputFileString;
+		String sheetName = "Feedback Daten";
 		exportExcelData(data,sheetName,fileName);							
 	}
 	
@@ -422,7 +428,7 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 	//calculate the number of similar words from 2 text
 	public static int numOfOverlap(String s1, String s2) {
 
-		 int num = 0;
+		  int num = 0;
 		  String[] a = s1.split(" ");
 		  String[] b = s2.split(" ");
 
@@ -436,7 +442,6 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 
 		  return num;
 	}
-		
 	//create a new text without punctuation from a given text
   	public static String textWithoutPunc(String text) {
   		
@@ -446,7 +451,7 @@ public class Analyzer extends JCasAnnotator_ImplBase {
   	}
   	
   	// create text of unique word without punc from a given text
-  	public static String uniqueText(String text) {
+  	public static String uniqueTextWithoutPunc(String text) {
   		
   		 String[] strWithoutPunc = text.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");		    
   		 String wordWithoutPunc = String.join(" ", strWithoutPunc);			    			    
@@ -469,7 +474,69 @@ public class Analyzer extends JCasAnnotator_ImplBase {
   				 sb.append(a);
   				 sb.append("");
 	  			 }
-	  		 }
-	  		 return sb.toString();	  		 	  		 
-	  	}
+  		 }
+  		 return sb.toString();	  		 	  		 
+  	}
+  	// get list of overlap words
+ 	public static List<String> overlapWordsList(String s1, String s2) {
+ 		ArrayList<String> list = new ArrayList<String>();
+ 		String result = s1;
+ 		
+ 	    int num = 0;
+ 	    String[] a = s1.split(" ");
+ 	    String[] b = s2.split(" ");
+
+ 	    for (int i = 0; i < a.length; i++) {
+ 	        for (int j = 0; j < b.length; j++) {
+ 	            if (a[i].equals(b[j])) {
+ 	        	    list.add(a[i]);
+ 	                num++;
+ 	            }
+ 	        }
+ 	    }
+ 	    return list;	    
+ 	}
+ 	// To remove a word from a String
+    public static String remove(String str, String word){        
+        String msg[] = str.split(" ");
+        String new_str = "";
+        for (String words : msg) {         
+            if (!words.equals(word)) { 
+                new_str += words + " ";
+            }
+        } 
+        return new_str;
+    }
+    //return not-ovelap words
+  	public static String nonOverlapWords(String s1, String s2) {
+  		ArrayList<String> list = new ArrayList<String>();
+  		String result = s1;
+  		
+  	    int num = 0;
+  	    String[] a = s1.split(" ");
+  	    ArrayList<String> arrList = new ArrayList<String>();
+  	    for (int i = 0; i < a.length; i++) {
+  			arrList.add(a[i]);
+  		}
+  	    String[] b = s2.split(" ");
+
+  	    for (int i = 0; i < a.length; i++) {
+  	        for (int j = 0; j < b.length; j++) {
+  	            if (a[i].equals(b[j])) {
+  	        	    list.add(a[i]);
+  	                num++;
+  	            }
+  	        }
+  	    }
+  	    for (int i = 0; i < list.size(); i++) {
+  			result =remove(result,list.get(i));
+  		}
+  	    System.out.println(num);
+  	    //replace 2 or more spaces with single space
+  	    result = result.trim().replaceAll(" +", " ");
+  	    
+  	    return result;
+  	    
+  	}
+    
 }

@@ -26,7 +26,6 @@ import de.unidue.ltl.feedback.io.SRAFeedbackReader;
 import de.unidue.ltl.feedback.io.TargetAnswerReader;
 import de.unidue.ltl.feedback.io.CFeedbackReader;
 import de.unidue.ltl.feedback.io.ICFeedbackReader;
-import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 public class BaseExperiment {
 
@@ -40,10 +39,10 @@ public class BaseExperiment {
 		  //SRAFeedback Reader
 		  // TODO: adjust path
 		  String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; 
-		  String scoreFile = ""; CollectionReaderDescription reader =
+		  String outputPath = "D:\\HIWI\\Kickoff\\Ergebnisse\\Test2.xlsx";
+		  CollectionReaderDescription reader =
 		  CollectionReaderFactory.createReaderDescription( SRAFeedbackLineReader.class,
-		  SRAFeedbackLineReader.PARAM_INPUT_FILE, essayPath, SRAFeedbackLineReader.PARAM_SCORE_FILE, scoreFile
-		  );
+		  SRAFeedbackLineReader.PARAM_INPUT_FILE, essayPath);
 			/*
 			 * //SRAFeedback Reader // TODO: adjust path String essayPath =
 			 * "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; String scoreFile = "";
@@ -131,7 +130,7 @@ public class BaseExperiment {
 				OpenNlpChunker.PARAM_LANGUAGE, "en");
 //		AnalysisEngineDescription vocab = createEngineDescription(VocabAnnotator.class);
 		
-		AnalysisEngineDescription analyzer = createEngineDescription(Analyzer.class);
+		AnalysisEngineDescription analyzer = createEngineDescription(Analyzer.class,Analyzer.PARAM_OUTPUT_FILE, outputPath);
 		
 		AnalysisEngineDescription binCasWriter = createEngineDescription(
 				BinaryCasWriter.class, 
