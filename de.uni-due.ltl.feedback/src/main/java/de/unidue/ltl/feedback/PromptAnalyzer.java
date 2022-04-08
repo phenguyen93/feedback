@@ -1,7 +1,6 @@
 package de.unidue.ltl.feedback;
 
 import java.io.BufferedWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -44,14 +43,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.PennTree;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.chunk.Chunk;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
-import de.unidue.ltl.escrito.core.types.DocumentData;
-import de.unidue.ltl.escrito.core.types.Feedback;
-import de.unidue.ltl.escrito.core.types.GrammarProfile;
 import de.unidue.ltl.escrito.core.types.LearnerAnswer;
-import de.unidue.ltl.escrito.core.types.VocabularyProfile;
-
-
-
 
 public class PromptAnalyzer extends JCasAnnotator_ImplBase {
 	

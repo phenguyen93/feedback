@@ -1,6 +1,6 @@
 
 
-/* First created by JCasGen Thu May 20 14:40:01 CEST 2021 */
+/* First created by JCasGen Wed Apr 06 16:57:33 CEST 2022 */
 package de.unidue.ltl.escrito.core.types;
 
 import org.apache.uima.jcas.JCas; 
@@ -11,8 +11,8 @@ import org.apache.uima.jcas.tcas.Annotation;
 
 
 /** 
- * Updated by JCasGen Fri May 21 18:45:18 CEST 2021
- * XML source: /Users/andrea/Documents/Programmierung/workspace_ASAS/de.uni-due.ltl.Feedback/src/main/resources/desc/type/Escrito.xml
+ * Updated by JCasGen Fri Apr 08 13:29:28 CEST 2022
+ * XML source: C:/Users/ENVY/git/feedback/de.uni-due.ltl.feedback/src/main/resources/desc/type/Escrito.xml
  * @generated */
 public class Feedback extends Annotation {
   /** @generated
@@ -77,6 +77,28 @@ public class Feedback extends Annotation {
  
     
   //*--------------*
+  //* Feature: promptId
+
+  /** getter for promptId - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public String getPromptId() {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_promptId == null)
+      jcasType.jcas.throwFeatMissing("promptId", "de.unidue.ltl.escrito.core.types.Feedback");
+    return jcasType.ll_cas.ll_getStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_promptId);}
+    
+  /** setter for promptId - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setPromptId(String v) {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_promptId == null)
+      jcasType.jcas.throwFeatMissing("promptId", "de.unidue.ltl.escrito.core.types.Feedback");
+    jcasType.ll_cas.ll_setStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_promptId, v);}    
+   
+    
+  //*--------------*
   //* Feature: feedback
 
   /** getter for feedback - gets 
@@ -99,25 +121,113 @@ public class Feedback extends Annotation {
    
     
   //*--------------*
-  //* Feature: id
+  //* Feature: question
 
-  /** getter for id - gets 
+  /** getter for question - gets 
    * @generated
    * @return value of the feature 
    */
-  public String getId() {
-    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_id == null)
-      jcasType.jcas.throwFeatMissing("id", "de.unidue.ltl.escrito.core.types.Feedback");
-    return jcasType.ll_cas.ll_getStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_id);}
+  public String getQuestion() {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_question == null)
+      jcasType.jcas.throwFeatMissing("question", "de.unidue.ltl.escrito.core.types.Feedback");
+    return jcasType.ll_cas.ll_getStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_question);}
     
-  /** setter for id - sets  
+  /** setter for question - sets  
    * @generated
    * @param v value to set into the feature 
    */
-  public void setId(String v) {
-    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_id == null)
-      jcasType.jcas.throwFeatMissing("id", "de.unidue.ltl.escrito.core.types.Feedback");
-    jcasType.ll_cas.ll_setStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_id, v);}    
+  public void setQuestion(String v) {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_question == null)
+      jcasType.jcas.throwFeatMissing("question", "de.unidue.ltl.escrito.core.types.Feedback");
+    jcasType.ll_cas.ll_setStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_question, v);}    
+   
+    
+  //*--------------*
+  //* Feature: targetAnswer
+
+  /** getter for targetAnswer - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public String getTargetAnswer() {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_targetAnswer == null)
+      jcasType.jcas.throwFeatMissing("targetAnswer", "de.unidue.ltl.escrito.core.types.Feedback");
+    return jcasType.ll_cas.ll_getStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_targetAnswer);}
+    
+  /** setter for targetAnswer - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setTargetAnswer(String v) {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_targetAnswer == null)
+      jcasType.jcas.throwFeatMissing("targetAnswer", "de.unidue.ltl.escrito.core.types.Feedback");
+    jcasType.ll_cas.ll_setStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_targetAnswer, v);}    
+   
+    
+  //*--------------*
+  //* Feature: answer
+
+  /** getter for answer - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public String getAnswer() {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_answer == null)
+      jcasType.jcas.throwFeatMissing("answer", "de.unidue.ltl.escrito.core.types.Feedback");
+    return jcasType.ll_cas.ll_getStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_answer);}
+    
+  /** setter for answer - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setAnswer(String v) {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_answer == null)
+      jcasType.jcas.throwFeatMissing("answer", "de.unidue.ltl.escrito.core.types.Feedback");
+    jcasType.ll_cas.ll_setStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_answer, v);}    
+   
+    
+  //*--------------*
+  //* Feature: label
+
+  /** getter for label - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public String getLabel() {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_label == null)
+      jcasType.jcas.throwFeatMissing("label", "de.unidue.ltl.escrito.core.types.Feedback");
+    return jcasType.ll_cas.ll_getStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_label);}
+    
+  /** setter for label - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setLabel(String v) {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_label == null)
+      jcasType.jcas.throwFeatMissing("label", "de.unidue.ltl.escrito.core.types.Feedback");
+    jcasType.ll_cas.ll_setStringValue(addr, ((Feedback_Type)jcasType).casFeatCode_label, v);}    
+   
+    
+  //*--------------*
+  //* Feature: numOfFeedback
+
+  /** getter for numOfFeedback - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public int getNumOfFeedback() {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_numOfFeedback == null)
+      jcasType.jcas.throwFeatMissing("numOfFeedback", "de.unidue.ltl.escrito.core.types.Feedback");
+    return jcasType.ll_cas.ll_getIntValue(addr, ((Feedback_Type)jcasType).casFeatCode_numOfFeedback);}
+    
+  /** setter for numOfFeedback - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setNumOfFeedback(int v) {
+    if (Feedback_Type.featOkTst && ((Feedback_Type)jcasType).casFeat_numOfFeedback == null)
+      jcasType.jcas.throwFeatMissing("numOfFeedback", "de.unidue.ltl.escrito.core.types.Feedback");
+    jcasType.ll_cas.ll_setIntValue(addr, ((Feedback_Type)jcasType).casFeatCode_numOfFeedback, v);}    
   }
 
     

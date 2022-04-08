@@ -1,0 +1,132 @@
+-Printing text-: John gives Paul a book. He thinks that he might like it.
+--Coref chain--
+John(0-4) AND He(24-26) AND he(39-41).------
+--Coref chain--
+Paul(11-15) AND ------
+--Coref chain--
+a book(16-22) AND it(53-55) AND ------
+--Coref chain--
+He(24-26) AND he(39-41) AND ------
+--Coref chain--
+he(39-41) AND ------
+--Coref chain--
+it(53-55) AND ------
+
+
+-Printing text-: The cat did not come down from the tree. It was scared.
+--Coref chain--
+The cat(0-7) AND ------
+--Coref chain--
+the tree(31-39) AND It(41-43) AND ------
+--Coref chain--
+It(41-43) AND ------
+
+
+-Printing text-: Jane told Mary she was in danger.
+--Coref chain--
+Jane(0-4) AND she(15-18) AND ------
+--Coref chain--
+Mary(10-14) AND ------
+--Coref chain--
+she(15-18) AND ------
+
+
+-Printing text-: Peter told John that he is running the business for himself.
+--Coref chain--
+Peter(0-5) AND he(21-23) AND himself(52-59).------
+--Coref chain--
+John(11-15) AND ------
+--Coref chain--
+he(21-23) AND himself(52-59) AND ------
+--Coref chain--
+the business(35-47) AND ------
+--Coref chain--
+himself(52-59) AND ------
+
+
+-Printing text-: John saw a driver in his truck.
+--Coref chain--
+John(0-4) AND his(21-24) AND ------
+--Coref chain--
+a driver in his truck(9-30) AND ------
+--Coref chain--
+his truck(21-30) AND ------
+--Coref chain--
+his(21-24) AND ------
+
+
+-Printing text-: Peter bought a Ferrari. It is red
+--Coref chain--
+Peter(0-5) AND ------
+--Coref chain--
+a Ferrari(13-22) AND It(24-26) AND ------
+--Coref chain--
+It(24-26) AND ------
+
+
+-Printing text-: Peter bought a car. The vehicle is red
+--Coref chain--
+Peter(0-5) AND ------
+--Coref chain--
+a car(13-18) AND ------
+--Coref chain--
+The vehicle(20-31) AND ------
+
+
+-Printing text-: John and Peter love their cars. They drive them every day
+--Coref chain--
+John and Peter(0-14) AND their(20-25) AND They(32-36).------
+--Coref chain--
+John(0-4) AND ------
+--Coref chain--
+Peter(9-14) AND ------
+--Coref chain--
+their cars(20-30) AND ------
+--Coref chain--
+their(20-25) AND They(32-36) AND them(43-47).------
+--Coref chain--
+They(32-36) AND them(43-47) AND ------
+--Coref chain--
+them(43-47) AND ------
+
+
+-Printing text-: John has a Ferrari and Peter has a Beatle. They drive them every day
+--Coref chain--
+John(0-4) AND ------
+--Coref chain--
+a Ferrari and Peter(9-28) AND ------
+--Coref chain--
+a Ferrari(9-18) AND ------
+--Coref chain--
+Ferrari(11-18) AND ------
+--Coref chain--
+Peter(23-28) AND ------
+--Coref chain--
+a Beatle(33-41) AND ------
+--Coref chain--
+They(43-47) AND them(54-58) AND ------
+--Coref chain--
+them(54-58) AND ------
+
+
+-Printing text-: Sophia Loren says she will always be grateful to Bono. The actress revealed that the U2 singer helped her calm down when she became scared by a thunderstorm while travelling on a plane.
+--Coref chain--
+Sophia Loren(0-12) AND she(18-21) AND ------
+--Coref chain--
+she(18-21) AND ------
+--Coref chain--
+Bono(49-53) AND ------
+--Coref chain--
+The actress(55-66) AND her calm(102-110) AND she(121-124).------
+--Coref chain--
+the U2 singer(81-94) AND ------
+--Coref chain--
+her calm(102-110) AND she(121-124) AND ------
+--Coref chain--
+she(121-124) AND ------
+--Coref chain--
+a thunderstorm(142-156) AND ------
+--Coref chain--
+a plane(177-184) AND ------
+
+

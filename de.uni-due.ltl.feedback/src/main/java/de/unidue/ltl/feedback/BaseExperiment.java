@@ -10,14 +10,10 @@ import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.resource.ResourceInitializationException;
-
-import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpLemmatizer;
 import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpPosTagger;
 import de.tudarmstadt.ukp.dkpro.core.corenlp.CoreNlpSegmenter;
 import de.tudarmstadt.ukp.dkpro.core.io.bincas.BinaryCasWriter;
 import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiWriter;
-import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpChunker;
-
 import de.unidue.ltl.feedback.io.AnswerReader;
 import de.unidue.ltl.feedback.io.PCFeedbackReader;
 import de.unidue.ltl.feedback.io.QuestionReader;
@@ -35,14 +31,23 @@ public class BaseExperiment {
 	
 	private static void preprocess() throws ResourceInitializationException, UIMAException, IOException {
 		
+		/*
+		 * //CorefExampleReader // TODO: adjust path String documentPath =
+		 * "D:\\\\HIWI\\\\Kickoff\\\\CorefExample.xlsx";
+		 * 
+		 * CollectionReaderDescription reader =
+		 * CollectionReaderFactory.createReaderDescription( CorefExampleReader.class,
+		 * CorefExampleReader.PARAM_INPUT_FILE, documentPath);
+		 */
 		
-		  //SRAFeedback Reader
-		  // TODO: adjust path
-		  String essayPath = "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; 
-		  String outputPath = "D:\\HIWI\\Kickoff\\Ergebnisse\\Test2.xlsx";
-		  CollectionReaderDescription reader =
-		  CollectionReaderFactory.createReaderDescription( SRAFeedbackLineReader.class,
-		  SRAFeedbackLineReader.PARAM_INPUT_FILE, essayPath);
+		
+		  //SRAFeedbackLineReader // TODO: adjust path 
+			String essayPath ="D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; 
+			String outputPath ="D:\\HIWI\\Kickoff\\Ergebnisse\\FeedbackDaten.xlsx"; CollectionReaderDescription
+		  reader = CollectionReaderFactory.createReaderDescription(
+		  SRAFeedbackLineReader.class, SRAFeedbackLineReader.PARAM_INPUT_FILE,
+		  essayPath);
+		 
 			/*
 			 * //SRAFeedback Reader // TODO: adjust path String essayPath =
 			 * "D:\\\\HIWI\\\\Kickoff\\\\Datensammlungf.xlsx"; String scoreFile = "";
@@ -120,18 +125,11 @@ public class BaseExperiment {
 		 * PCFeedbackReader.PARAM_INPUT_FILE,
 		 * essayPath,PCFeedbackReader.PARAM_SCORE_FILE, scoreFile );
 		 */
-		  				
+		AnalysisEngineDescription posTagger = createEngineDescription(CoreNlpPosTagger.class,
+					CoreNlpPosTagger.PARAM_LANGUAGE, "en");  						
 		AnalysisEngineDescription seg = createEngineDescription(CoreNlpSegmenter.class,
 				CoreNlpSegmenter.PARAM_LANGUAGE, "en");
-		AnalysisEngineDescription posTagger = createEngineDescription(CoreNlpPosTagger.class,
-				CoreNlpPosTagger.PARAM_LANGUAGE, "en");
-		AnalysisEngineDescription lemmatizer = createEngineDescription(CoreNlpLemmatizer.class);
-		AnalysisEngineDescription chunker = createEngineDescription(OpenNlpChunker.class,
-				OpenNlpChunker.PARAM_LANGUAGE, "en");
-//		AnalysisEngineDescription vocab = createEngineDescription(VocabAnnotator.class);
-		
-		AnalysisEngineDescription analyzer = createEngineDescription(Analyzer.class,Analyzer.PARAM_OUTPUT_FILE, outputPath);
-		
+		AnalysisEngineDescription analyzer = createEngineDescription(Analyzer.class,Analyzer.PARAM_OUTPUT_FILE,outputPath);
 		AnalysisEngineDescription binCasWriter = createEngineDescription(
 				BinaryCasWriter.class, 
 				BinaryCasWriter.PARAM_FORMAT, "6+",
@@ -147,9 +145,7 @@ public class BaseExperiment {
 	
 		SimplePipeline.runPipeline(reader, 
 				seg, 
-				posTagger, 
-				lemmatizer,
-	//				chunker,
+				posTagger,
 				analyzer
 	//			xmiWriter,
 	//			binCasWriter

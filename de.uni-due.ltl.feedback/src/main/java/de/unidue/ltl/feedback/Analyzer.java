@@ -25,8 +25,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
-import org.apache.uima.fit.component.initialize.ConfigurationParameterInitializer;
-import org.apache.uima.fit.component.initialize.ExternalResourceInitializer;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
@@ -35,9 +33,7 @@ import org.apache.uima.resource.ResourceInitializationException;
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
-import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.PennTree;
-import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.chunk.Chunk;
-import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
+import de.unidue.ltl.escrito.core.types.Feedback;
 
 public class Analyzer extends JCasAnnotator_ImplBase {
 	
@@ -56,41 +52,34 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 	    //create label for excel file
 	    data.put("0", new Object[] {" ","Prompt ID","Label", "NumOfSentences", "NumOfWords","Words/sentence","UniqueWord","Type-TokenRatio",
 	    		"NumOfContentWords","Content-TokenRatio","OverlapWithAnswer(%)","OverlapWithQuestion(%)","OverlapWithTargetAnswer(%)","Non Overlap Words"});	   
-	}
-	
+	}	
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
 		
-		DocumentMetaData meta = JCasUtil.selectSingle(aJCas, DocumentMetaData.class);
-		
-		String promptId = meta.getDocumentId();		
-		String labelText = meta.getDocumentTitle();
-		String answerText = meta.getCollectionId();
-		String questionText = meta.getDocumentBaseUri();
-		String targetAnswerText = meta.getDocumentUri();
-		int numberOfFeedback = meta.getEnd();
-		
-//		System.out.println("Printing feedback text:"+feedbackText);
+		Feedback fb = JCasUtil.selectSingle(aJCas, Feedback.class);
+		String promptId = fb.getPromptId();
+		String feedbackText = fb.getFeedback();
+		String labelText = fb.getLabel();
+		String answerText = fb.getAnswer();
+		String questionText = fb.getQuestion();
+		String targetAnswerText = fb.getTargetAnswer();
+		int numberOfFeedback = fb.getNumOfFeedback();
 		
 		Collection<Sentence> sentences = JCasUtil.select(aJCas, Sentence.class);
 		int numOfSentence = sentences.size();
-		double numOfSentenceNormalize = (double) numOfSentence/numberOfFeedback;
-//		System.out.println("Anzahl der Sätze: "+numOfSentence);
+//		double numOfSentenceNormalize = (double) numOfSentence/numberOfFeedback;
 		
 		Collection<Token> tokens = JCasUtil.select(aJCas, Token.class);
-//		System.out.println("Anzahl der Tokens: "+ tokens.size());
 		
 		StringBuilder sbAllWords = new StringBuilder();
 		StringBuilder sbContentWords = new StringBuilder();
 		int tokenWithoutPunc = 0;
 		
-		for (Token token : tokens){
-//			System.out.println(token.getCoveredText()+"-"+token.getPos().getCoarseValue()+"-"+token.getPosValue());			
+		for (Token token : tokens){		
 			if(!token.getPos().getCoarseValue().equals("PUNCT")) {
 				sbAllWords.append(token.getCoveredText());
 				sbAllWords.append(" ");
-				tokenWithoutPunc+=1;
-				
+				tokenWithoutPunc+=1;				
 			}	
 			if(token.getPos().getCoarseValue().equals("ADJ")||token.getPos().getCoarseValue().equals("NOUN")||
 					token.getPos().getCoarseValue().equals("VERB")||token.getPos().getCoarseValue().equals("ADV")) {
@@ -110,14 +99,12 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 		double typeTokenRate = (double) numOfUniqueWords/numOfWord;
 		
 		String textWithOnlyContentWords = sbContentWords.toString();		
-		System.out.println("----Printing content text-----:"+textWithOnlyContentWords);
+//		System.out.println("----Printing content text-----:"+textWithOnlyContentWords);
 		
 		int numOfContentWord = numberOfWord(textWithOnlyContentWords);
 		double contentTokenRate = (double)numOfContentWord/numOfWord;
-				
-//		double numOfContentWordNormalize = (double) numOfContentWord/numberOfFeedback;
-
-						
+		
+//		double numOfContentWordNormalize = (double) numOfContentWord/numberOfFeedback;						
 //		String top5MostFrequentWords = mostFrequentWords(textWithOnlyContentWords); 
 		
 		int numberOfUniqueWordInContentText = numberOfWord(uniqueTextWithoutPunc(textWithOnlyContentWords));
@@ -132,47 +119,24 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 		double overlapWithAnswerRatio = (double)numOfWordOverlapWithAnswer/numberOfUniqueWordInContentText;
 		
 		//get List of overlap words with question
-		List<String> overlapWithQuestion = overlapWordsList(uniqueTextWithoutPunc(textWithoutPunc), uniqueTextWithoutPunc(questionText));
+		List<String> overlapWithQuestion = overlapWordsList(uniqueTextWithoutPunc(feedbackText), uniqueTextWithoutPunc(questionText));
 		//get List of overlap words with target answer
-		List<String> overlapWithTargetAnswer = overlapWordsList(uniqueTextWithoutPunc(textWithOnlyContentWords), uniqueTextWithoutPunc(targetAnswerText));
+		List<String> overlapWithTargetAnswer = overlapWordsList(uniqueTextWithoutPunc(feedbackText), uniqueTextWithoutPunc(targetAnswerText));
 		//get List of overlap words with answer
-		List<String> overlapWithAnswer = overlapWordsList(uniqueTextWithoutPunc(textWithOnlyContentWords), uniqueTextWithoutPunc(answerText));
+		List<String> overlapWithAnswer = overlapWordsList(uniqueTextWithoutPunc(feedbackText), uniqueTextWithoutPunc(answerText));
 		//create List of all overlap words
 		ArrayList<String> list = new ArrayList<String>();
 		list.addAll(overlapWithQuestion);
 		list.addAll(overlapWithTargetAnswer);
 		list.addAll(overlapWithAnswer);
 		String allOverlapText = String.join(" ", list);
-		String nonOverlapWords = nonOverlapWords(uniqueTextWithoutPunc(textWithoutPunc), allOverlapText);
-		
-		
-		
+		String nonOverlapWords = nonOverlapWords(uniqueTextWithoutPunc(feedbackText), allOverlapText);
+						
 		//add to map to export parameters to excel file
 		data.put(String.valueOf(index),new Object[] {index,promptId,labelText,numOfSentence,
 				numOfWord,wordsPerSentence,numOfUniqueWords,typeTokenRate,numOfContentWord,contentTokenRate,
 				overlapWithAnswerRatio,overlapWithQuestionRatio,overlapWithTargetAnswerRatio,nonOverlapWords});
-		index++;
-		
-//		Collection<Chunk> chunks = JCasUtil.select(aJCas, Chunk.class);
-//		for (Chunk chunk : chunks){
-//			System.out.println(chunk.getCoveredText() + " "+ chunk.getChunkValue());
-//		}
-//		Collection<PennTree> pennTrees = JCasUtil.select(aJCas, PennTree.class);
-//		if (pennTrees.isEmpty()){
-//			System.err.println("No Trees found!");
-//			System.exit(-1);
-//		}
-//		for (PennTree penntree : pennTrees){
-//			System.out.println("TREE: "+penntree.toString());
-//		}
-//		Collection<Dependency> dependencies = JCasUtil.select(aJCas, Dependency.class);
-//		for (Dependency dep : dependencies){
-//			System.out.println(dep.getGovernor().getCoveredText() + " " + dep.getDependencyType().toString() + " " + dep.getDependent().getCoveredText());
-//		}		
-//		for (GrammarAnomaly ga : JCasUtil.select(aJCas, GrammarAnomaly.class)){
-//			System.out.println(ga.getCoveredText()+ ": "+ ga.getCategory()+ " - "+ga.getDescription());
-//		}
-		
+		index++;				
 	}
 		
 	@Override
@@ -195,13 +159,11 @@ public class Analyzer extends JCasAnnotator_ImplBase {
         //Iterate over data and write to sheet
         Set<String> keyset = map.keySet();
         int rownum = 1;
-        for (String key : keyset)
-        {
+        for (String key : keyset){
             Row row = sheet.createRow(rownum++);
             Object [] objArr = map.get(key);
             int cellnum = 0;
-            for (Object obj : objArr)
-            {
+            for (Object obj : objArr){
                Cell cell = row.createCell(cellnum++);
                if(obj instanceof String)
                     cell.setCellValue((String)obj);
@@ -211,19 +173,15 @@ public class Analyzer extends JCasAnnotator_ImplBase {
                     cell.setCellValue((Double)obj);
             }
         }
-        try
-        {
+        try{
             //Write the workbook in file system
             FileOutputStream out = new FileOutputStream(new File(fileName));
             workbook.write(out);
             out.close();
             System.out.println("written successfully on disk.");
-        } 
-        catch (Exception e) 
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-           			
+        }           			
 	}
 	 //calculate number of unique words from text
 	public static int numberOfUniqueWords(String text) {
@@ -245,7 +203,7 @@ public class Analyzer extends JCasAnnotator_ImplBase {
 	//generate a hashmap with word frequency from a text
 	 public static HashMap<String, Integer> wordFrequency (String text){		 
 //		 String[] strWithoutPunc = text.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");		    
-//  		 String textWithoutPunc = String.join(" ", strWithoutPunc);	
+//  	 String textWithoutPunc = String.join(" ", strWithoutPunc);	
 		 String[] arr = text.toLowerCase().split(" ");
     	 int [] fr = new int [arr.length];
          int visited = -1;
@@ -512,7 +470,6 @@ public class Analyzer extends JCasAnnotator_ImplBase {
   		ArrayList<String> list = new ArrayList<String>();
   		String result = s1;
   		
-  	    int num = 0;
   	    String[] a = s1.split(" ");
   	    ArrayList<String> arrList = new ArrayList<String>();
   	    for (int i = 0; i < a.length; i++) {
@@ -524,14 +481,12 @@ public class Analyzer extends JCasAnnotator_ImplBase {
   	        for (int j = 0; j < b.length; j++) {
   	            if (a[i].equals(b[j])) {
   	        	    list.add(a[i]);
-  	                num++;
   	            }
   	        }
   	    }
   	    for (int i = 0; i < list.size(); i++) {
   			result =remove(result,list.get(i));
   		}
-  	    System.out.println(num);
   	    //replace 2 or more spaces with single space
   	    result = result.trim().replaceAll(" +", " ");
   	    

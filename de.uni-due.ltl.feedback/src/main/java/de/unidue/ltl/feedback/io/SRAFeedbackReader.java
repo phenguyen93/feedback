@@ -27,7 +27,6 @@ import org.dkpro.tc.api.type.TextClassificationTarget;
 
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.ResourceUtils;
-import de.unidue.ltl.escrito.core.types.Feedback;
 import de.unidue.ltl.escrito.core.types.LearnerAnswer;
 
 
@@ -170,8 +169,6 @@ public class SRAFeedbackReader extends JCasCollectionReader_ImplBase {
 		catch (Exception e) {
 			throw new CollectionException(e);
 		}
-		Feedback fb = new Feedback(jcas, 0, jcas.getDocumentText().length());
-		fb.setId(item.getPromptId());
 
 		LearnerAnswer learnerAnswer = new LearnerAnswer(jcas, 0, jcas.getDocumentText().length());
 		learnerAnswer.setPromptId("-1");

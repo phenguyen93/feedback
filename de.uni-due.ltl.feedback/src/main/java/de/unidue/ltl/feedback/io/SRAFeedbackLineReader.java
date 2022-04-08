@@ -29,7 +29,6 @@ import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.ResourceUtils;
 import de.unidue.ltl.escrito.core.types.Feedback;
 import de.unidue.ltl.escrito.core.types.LearnerAnswer;
-
 /*
  * read feedbacks, questions, target answers and answers from excel file
  * 
@@ -79,9 +78,6 @@ public class SRAFeedbackLineReader extends JCasCollectionReader_ImplBase {
 			System.out.println("NumberOfSheet: "+numOfSheet);
 			
 			for (int i = 0; i < numOfSheet; i++) {
-				
-				//get number of blank cell 
-				int numOfBlankCell =0;				
 				String label = "";
 				String feedback = "";
 				String answer = "";
@@ -129,31 +125,27 @@ public class SRAFeedbackLineReader extends JCasCollectionReader_ImplBase {
 		SRAFeedbackItem item = items.poll();
 		getLogger().debug(item);
 		
-		try {
-			
+		try {			
 			jcas.setDocumentLanguage(language);
 			jcas.setDocumentText(item.getFeedback());
+			System.out.println(item.getFeedback());
 			DocumentMetaData dmd = DocumentMetaData.create(jcas);
 			//TODO: The name of the getters und setters must be meaningful
 			dmd.setDocumentId(item.getPromptId());
-			dmd.setDocumentTitle(item.getLabel());
-			dmd.setCollectionId(item.getAnswer());
-			dmd.setDocumentBaseUri(item.getQuestion());
-			dmd.setDocumentUri(item.getTargetAnswer());					
-			dmd.setEnd(item.getNumOfFeedback());
-			
-		}
-
-		catch (Exception e) {
+			dmd.setDocumentTitle(item.getFeedback());
+						
+			Feedback fb = new Feedback(jcas,0,jcas.getDocumentText().length()); 
+			fb.setPromptId(item.getPromptId());
+			fb.setQuestion(item.getQuestion());
+			fb.setAnswer(item.getAnswer());
+			fb.setTargetAnswer(item.getTargetAnswer());
+			fb.setLabel(item.getLabel());
+			fb.setNumOfFeedback(item.getNumOfFeedback());
+			fb.setFeedback(item.getFeedback());
+			fb.addToIndexes();			 
+		}catch (Exception e) {
 			throw new CollectionException(e);
-		}
-		Feedback fb = new Feedback(jcas, 0, jcas.getDocumentText().length());
-		fb.setId(item.getPromptId());
-
-		LearnerAnswer learnerAnswer = new LearnerAnswer(jcas, 0, jcas.getDocumentText().length());
-		learnerAnswer.setPromptId("-1");
-		learnerAnswer.addToIndexes();
-
+		}		
 		TextClassificationTarget unit = new TextClassificationTarget(jcas, 0, jcas.getDocumentText().length());
 		// will add the token content as a suffix to the ID of this unit
 		unit.setSuffix(item.getPromptId());
